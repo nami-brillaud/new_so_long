@@ -6,7 +6,7 @@
 /*   By: nfujisak <nfujisak@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 16:21:47 by nfujisak          #+#    #+#             */
-/*   Updated: 2024/07/30 14:00:05 by nfujisak         ###   ########.fr       */
+/*   Updated: 2024/07/30 14:33:01 by nfujisak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,65 @@ int	ber_check(char *file)
 }
 
 // //Function to check is map is rectangular and contains 1 P,C, Eusing gnl
+// assuming that each line is terminated by a newline char after the split.
+int	print_error(int n)
+{
+	if (n == 1)
+		ft_printf("Error: invalid map format! \n");
+	if (n == 2)
+		ft_printf("Error: invalid path! \n");
+	return (NO);
+}
+
+int	rect_pce_check(t_map *map)
+{
+	int	i;
+
+	i = 0;
+	map->cols = ft_strlen(map->map[0]);
+	map->rcdiff = 0;
+	while (map->map[i])
+	{
+		if ((int)ft_strlen(map->map[i]) != map->cols)
+			map->rcdiff = 1;
+		map->p += char_count(map->map[i], 'P');
+		map->c += char_count(map->map[i], 'C');
+		map->e += char_count(map->map[i], 'E');
+		map->x += char_count(map->map[i], 'X');
+		i++;
+	}
+	map->rows = i; // does this correctly count ?
+	ft_printf("rows %d\n", map->rows);
+	ft_printf("p %d\n", map->rows);
+	if (map->rcdiff == 1 || map->p != 1 || map->c < 1 || map->e != 1)
+		return (NO);
+	return (OK);
+}
+
+int	validate_map(t_map *map)
+{
+	int	i;
+	int	error;
+
+	i = 0;
+	error = 0;
+	if (rect_pce_check(map)) // this sets the number of rowns and cols
+		error = 1;
+	while (map->map[i] && i++)
+	{
+		if ((i == 0 || i == map->rows - 1) && !(in_set(map->map[i], "1")))
+			error = 1;
+		if (map->map[i][0] != '1' || map->map[i][map->cols - 1] != '1'
+			|| !in_set(map->map[i], "10CEPX"))
+			error = 1;
+	}
+	// if (flood_fill(map, 0, 0) || map->c_found != map->c || map->e_found != 1)
+	// 	error = 2;
+	if (error > 0)
+		return (print_error(error));
+	return (OK);
+}
+
 // int	rect_pce_check(char	*file, t_map *map)
 // {
 // 	int		fd;
@@ -163,10 +222,10 @@ int	ber_check(char *file)
 
 /* !!!!! Testing mains are here !!!!! */
 
-__attribute__((destructor)) static void destructor()
-{
-	system("leaks -q so_long");
-}
+// __attribute__((destructor)) static void destructor()
+// {
+// 	system("leaks -q so_long");
+// }
 
 int	main(void)
 {
@@ -176,6 +235,8 @@ int	main(void)
 	game = (t_game *)malloc(sizeof(t_game));
 	init_game(game);
 	read_map(file, game);
+	if (!validate_map(&game->map))
+		ft_printf("There is an issue here\n");
 	free(game);
 	return (OK);
 }

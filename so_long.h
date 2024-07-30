@@ -6,7 +6,7 @@
 /*   By: nfujisak <nfujisak@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/26 16:29:12 by nfujisak          #+#    #+#             */
-/*   Updated: 2024/07/30 13:53:24 by nfujisak         ###   ########.fr       */
+/*   Updated: 2024/07/30 14:13:12 by nfujisak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ void	init_game(t_game *game);
 
 /* map_check.c */
 int		ber_check(char *file);
+int		validate_map(t_map *map);
 
 /* read_map.c */
 void 	print_map(char **map);
