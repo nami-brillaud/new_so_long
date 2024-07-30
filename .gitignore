@@ -1,0 +1,10 @@
+# Ignore mlx library 
+mlx/
+
+# Ignore make and build files
+*.o 
+*.a
+*.dSYM
+
+# Ignore Mac system files
+.DS_store
