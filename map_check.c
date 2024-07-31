@@ -6,7 +6,7 @@
 /*   By: nfujisak <nfujisak@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 16:21:47 by nfujisak          #+#    #+#             */
-/*   Updated: 2024/07/30 14:33:01 by nfujisak         ###   ########.fr       */
+/*   Updated: 2024/07/31 19:40:40 by nfujisak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,21 +40,44 @@ int	char_count(char *line, char c)
 	return (count);
 }
 
+#include <stdio.h>
 int	in_set(char *line, char *set)
 {
-	int	count;
+	int		count;
+	char	*line_ptr;
 
 	count = 0;
+	line_ptr = line;
 	while (*line)
 	{
 		if (ft_strchr(set, *line))
 			count++;
 		line++;
 	}
-	if (count != (int)ft_strlen(line))
+	if (count != (int)ft_strlen(line_ptr))
 		return (NO);
 	return (OK);
 }
+
+// int	in_set(char *line, char *set)
+// {
+// 	int			i;
+// 	char		*tmp;
+// 	const int	len = ft_strlen(line);
+
+// 	i = 0;
+// 	while (*line)
+// 	{
+// 		tmp = set;
+// 		while (*tmp)
+// 			if (*line == *tmp++)
+// 				++i;
+// 		++line;
+// 	}
+// 	if (i != len)
+// 		return (NO);
+// 	return (OK);
+// }
 
 // Function to check ber extension (works for only one file at a time and works for directory/file.ber)
 int	ber_check(char *file)
@@ -88,7 +111,7 @@ int	rect_pce_check(t_map *map)
 	map->rcdiff = 0;
 	while (map->map[i])
 	{
-		if ((int)ft_strlen(map->map[i]) != map->cols)
+		if ((int)ft_strlen(map->map[0]) != map->cols)
 			map->rcdiff = 1;
 		map->p += char_count(map->map[i], 'P');
 		map->c += char_count(map->map[i], 'C');
@@ -97,8 +120,8 @@ int	rect_pce_check(t_map *map)
 		i++;
 	}
 	map->rows = i; // does this correctly count ?
-	ft_printf("rows %d\n", map->rows);
-	ft_printf("p %d\n", map->rows);
+	ft_printf("rows count %d\n", map->rows);
+	ft_printf("cols count %d\n", map->cols);
 	if (map->rcdiff == 1 || map->p != 1 || map->c < 1 || map->e != 1)
 		return (NO);
 	return (OK);
@@ -113,13 +136,15 @@ int	validate_map(t_map *map)
 	error = 0;
 	if (rect_pce_check(map)) // this sets the number of rowns and cols
 		error = 1;
-	while (map->map[i] && i++)
+	while (map->map[i])
 	{
-		if ((i == 0 || i == map->rows - 1) && !(in_set(map->map[i], "1")))
-			error = 1;
+		// if (in_set(map->map[0], "1") || in_set(map->map[map->rows - 1], "1"))
+		// 	error = 1;
 		if (map->map[i][0] != '1' || map->map[i][map->cols - 1] != '1'
-			|| !in_set(map->map[i], "10CEPX"))
+			|| in_set(map->map[i], "10CEPX"))
 			error = 1;
+		ft_printf("result is %d\n", in_set(map->map[i], "10CEPX"));
+		i++;
 	}
 	// if (flood_fill(map, 0, 0) || map->c_found != map->c || map->e_found != 1)
 	// 	error = 2;
@@ -234,9 +259,16 @@ int	main(void)
 
 	game = (t_game *)malloc(sizeof(t_game));
 	init_game(game);
-	read_map(file, game);
-	if (!validate_map(&game->map))
-		ft_printf("There is an issue here\n");
+	if (read_map(file, game) == NO)
+	{
+		ft_printf("Invalid file\n");
+		return (NO);
+	}
+	if (validate_map(&game->map))
+	{
+		ft_printf("Issue here\n");
+		return (NO);
+	}
 	free(game);
 	return (OK);
 }

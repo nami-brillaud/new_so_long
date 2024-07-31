@@ -6,7 +6,7 @@
 /*   By: nfujisak <nfujisak@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/26 16:29:12 by nfujisak          #+#    #+#             */
-/*   Updated: 2024/07/30 14:13:12 by nfujisak         ###   ########.fr       */
+/*   Updated: 2024/07/31 19:14:23 by nfujisak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int		validate_map(t_map *map);
 
 /* read_map.c */
 void 	print_map(char **map);
-void	read_map(char *file, t_game *game);
+int		read_map(char *file, t_game *game);
 
 /* KEYS */
 # define W 13
